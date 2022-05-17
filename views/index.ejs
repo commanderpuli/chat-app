@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body>
+    <div class="grey">    <h1>Chat App</h1>
+        <h2>Enter Your Name</h2>
+        <input type="text" id="name" placeholder="Enter Your Name Here"></div>
+    <div id="messagesHolder">
+
+    </div>
+    <div class="greyss">
+        <h2>Enter Your Message</h2>
+        <textarea cols="40" id="message" placeholder="Enter Your Message Here"> </textarea>
+        <button>Send</button>
+    </div>
+</body>
+
+<script>
+        let messages;
+    var messageHolder = document.getElementById("messagesHolder")
+    var message = document.createElement("div")
+    messageHolder.appendChild(message)
+    async function getMessages() {
+        let res = await fetch("/messages")
+        let text = await res.json();
+        messages = await text;
+    }
+
+    getMessages();
+
+    setInterval(function () {
+
+        getMessages();
+        let formattedMessages = ""
+        messages.map (ele => {
+            console.log(ele)
+            formattedMessages += "<div class = \"message\">" + "<message>" + ele.name + ": " + "</message>"  + ele.message + "</div>"
+        }) 
+        message.innerHTML = formattedMessages;       
+    }, 1000);
+
+    let button = document.getElementsByTagName("button")[0];
+    button.addEventListener("click", function() {
+        let name = document.getElementById("name").value
+        let messageToSend = document.getElementById("message").value
+        let data = {name: name, message: messageToSend};
+
+        var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+var urlencoded = new URLSearchParams();
+urlencoded.append("message", messageToSend);
+urlencoded.append("name", name);
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: urlencoded,
+  redirect: 'follow'
+};
+
+fetch("/newmessage?message=hello", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
+    })
+</script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+    body {
+        font-family: Roboto;
+        border: 0px;
+        margin: 0px;
+        padding: 0px;
+        margin-bottom: 150px;
+    }
+    div {
+        border: 0px;
+        margin: 0px;
+        padding: 5px;
+    }
+    message {
+        padding: 0px;
+        padding-right: 20px;
+        margin: 0px;
+        color: rgb(41, 95, 255);
+    }
+    .message {
+        font-size: 30px;
+        background-color: rgb(237, 237, 237);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px;
+        max-width: fit-content;
+    }
+    .grey {
+        background-color: rgb(168, 168, 168);
+    }
+    .grey > * {
+        margin: 5px;
+    }
+    .greyss {
+        background-color: rgb(168, 168, 168);
+        position: fixed;
+        left: 0vw;
+        bottom: 0vw;
+        width: 99%;
+    }
+    .greyss > * {
+        margin: 5px;
+    }
+    input {
+        border-radius: 5px;
+        width: fit-content;
+        height: 20px;
+        font-family: Roboto;
+        border: 1px solid grey;
+        padding: 5px;
+        font-size: 20px;
+    }
+    textarea {
+        font-family: Roboto;
+        border: 1px solid grey;
+        border-radius: 5px;
+        padding: 5px;
+        font-size: 20px;
+        
+    }
+    button {
+        border:  none;
+        border-radius: 10px;
+        background-color: rgb(60, 190, 255);
+        font-size: 40px;
+        font-family: Roboto;
+        position: fixed;
+        bottom: 2%;
+    }
+</style>
+</html>
